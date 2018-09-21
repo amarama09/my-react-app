@@ -5,6 +5,10 @@ class Table extends Component {
     handleRowDelete=(row)=>{
         this.props.rowDelete(row)
     }
+
+    handleColumnSort=(column)=>{
+        this.props.columnSort(column)
+    }
     
 
     render() { 
@@ -14,10 +18,10 @@ class Table extends Component {
 
             <thead>
             <tr>
-                <th>Title</th>
-                <th>Genre</th>
-                <th>Stock</th>
-                <th>Rate</th> 
+                <th onClick={()=>this.handleColumnSort('title')} >Title</th>
+                <th  onClick={()=>this.handleColumnSort('genre.name')} >Genre</th>
+                <th  onClick={()=>this.handleColumnSort('numberInStock')}>Stock</th>
+                <th  onClick={()=>this.handleColumnSort('dailyRentalRate')}>Rate</th> 
                 <th></th>  
                 <th></th> 
             </tr>

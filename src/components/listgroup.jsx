@@ -9,10 +9,10 @@ class ListGroup extends Component {
       <ul className="list-group">
         {items.map(itemObj => (
           <li
-            key={itemObj.id}
+            key={itemObj._id}
             onClick={()=>onItemSelect(itemObj)}
             className={
-              itemObj.id === itemActive.id
+              itemObj._id === itemActive._id
                 ? "list-group-item active"
                 : "list-group-item"
             }
