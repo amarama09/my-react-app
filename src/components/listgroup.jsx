@@ -13,7 +13,7 @@ class ListGroup extends Component {
             onClick={()=>onItemSelect(itemObj)}
             className={
               itemObj._id === itemActive._id
-                ? "list-group-item active"
+                ? "list-group-item bg-secondary  text-white"
                 : "list-group-item"
             }
           >

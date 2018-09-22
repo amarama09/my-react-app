@@ -5,6 +5,9 @@ import Paginator from "./paginator";
 import ListGroup from "./listgroup";
 import _ from 'lodash';
 import { getGenres } from "../services/fakeGenreService";
+import Like from "./like";
+
+
 
 class MoviesGrid extends Component {
   state = {
@@ -15,14 +18,39 @@ class MoviesGrid extends Component {
     itemsPerPage: 4,
     sortObj: { name: "title", order: "asc" }
   };
-
+  columns = [
+    { name: "title", label: "Title" },
+    { name: "genre.name", label: "Genre" },
+    { name: "numberInStock", label: "Stock" },
+    { name: "dailyRentalRate", label: "Rate" },
+    {
+      component: row => (
+        <Like
+          liked={row.like}
+          handleLikeToggle={this.handleLikeToggle}
+          obj={row}
+        />
+      )
+    },
+    {
+      component: row => (
+        <button
+          className="btn btn-info text-white btn-small"
+          onClick={() => this.deleteMovie(row)}
+        >
+          Delete
+        </button>
+      )
+    }
+  ];
   moviesToPresent() {
     return this.paginate(this.sortMovies(this.filterMovies()));
   }
 
   sortMovies(movieList) {
+  return _.orderBy(movieList,[this.state.sortObj.name],[this.state.sortObj.order]);
 
-   const sortedMovies= movieList.sort((movie1, movie2) => {
+  /* const sortedMovies= movieList.sort((movie1, movie2) => {
 
       let m1 = _.get(movie1,this.state.sortObj.name);
       let m2 = _.get(movie2,this.state.sortObj.name);
@@ -51,6 +79,7 @@ class MoviesGrid extends Component {
 
     console.log('Sorted ',this.state.sortObj.order, sortedMovies);
     return sortedMovies
+    */
   }
 
   paginate(movieList) {
@@ -83,17 +112,17 @@ class MoviesGrid extends Component {
               itemActive={this.state.itemActive}
               onItemSelect={itemObj => {
                 const itemActive = { ...itemObj };
-
                 this.setState({ itemActive, pageNum: 1 });
               }}
             />
           </div>
           <div className="col">
             <Table
-              data={this.moviesToPresent()}
-              rowDelete={this.deleteMovie}
-              handleLikeToggle={this.handleLikeToggle}
+              rows={this.moviesToPresent()}
+              columns={this.columns}
               columnSort={this.handleColumnSort}
+              sortObj={this.state.sortObj}
+
             />
             <Paginator
               totalItems={this.filterMovies().length}
@@ -127,10 +156,10 @@ class MoviesGrid extends Component {
 
   deleteMovie = movie => {
     const movies = this.state.movies.filter(m => m !== movie);
-    const pageNum =
-      movies.length % this.state.itemsPerPage === 0
-        ? this.state.pageNum - 1
-        : this.state.pageNum;
+    const pageNum = ((this.state.pageNum>1) && (movies.length % this.state.itemsPerPage === 0))? this.state.pageNum - 1:this.state.pageNum
+
+
+
     this.setState({ movies, pageNum });
   };
 

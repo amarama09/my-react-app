@@ -1,46 +1,57 @@
-import React, { Component } from 'react';
-import Like from './like';
+import React, { Component } from "react";
+import _ from "lodash";
 class Table extends Component {
 
-    handleRowDelete=(row)=>{
-        this.props.rowDelete(row)
-    }
+  raiseSort = column => {
+    this.props.columnSort(column);
+  };
 
-    handleColumnSort=(column)=>{
-        this.props.columnSort(column)
-    }
-    
+  getArrow(colName) {
+    const { sortObj } = this.props;
 
-    render() { 
-        const {data, handleLikeToggle}=this.props;
+    return (
+      colName === sortObj.name && (
+        <i className={"fa fa-sort-" + sortObj.order} aria-hidden="true" />
+      )
+    );
+  }
 
-        return ( <table className="table  table-hover">
 
-            <thead>
-            <tr>
-                <th onClick={()=>this.handleColumnSort('title')} >Title</th>
-                <th  onClick={()=>this.handleColumnSort('genre.name')} >Genre</th>
-                <th  onClick={()=>this.handleColumnSort('numberInStock')}>Stock</th>
-                <th  onClick={()=>this.handleColumnSort('dailyRentalRate')}>Rate</th> 
-                <th></th>  
-                <th></th> 
+
+
+  render() {
+    const { rows,columns } = this.props;
+
+    return (
+      <table className="table bg-light table-hover shadow">
+        <thead>
+          <tr className="bg-secondary text-white">
+            {columns.map(col => (
+              <th
+                className="clickable"
+                onClick={col.name ? () => this.raiseSort(col.name) : null}
+              >
+                {col.label}
+                {this.getArrow(col.name)}
+              </th>
+            ))}
+          </tr>
+        </thead>
+
+        <tbody>
+          {rows.map(row => (
+            <tr key={row._id} >
+              {columns.map(col => (
+                <td>
+                  {col.component ? col.component(row) : _.get(row, col.name)}{" "}
+                </td>
+              ))}{" "}
             </tr>
-            </thead>
-
-            <tbody>
-            {data.map(row=><tr key={row._id}>
-            <td>{row.title}</td>
-            <td>{row.genre.name}</td>
-            <td>{row.numberInStock}</td>
-            <td>{row.dailyRentalRate}</td>
-            <td><Like liked={row.like} handleLikeToggle={handleLikeToggle} obj={row}/></td>
-            <td><button className="btn btn-danger btn-small"  onClick={()=>this.handleRowDelete(row)} >Delete</button></td>
-            </tr>)}
-
-            </tbody>
-            
-        </table> );
-    }
+          ))}
+        </tbody>
+      </table>
+    );
+  }
 }
- 
+
 export default Table;

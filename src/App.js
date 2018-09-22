@@ -1,6 +1,6 @@
 import React, { Component } from "react";
-import MoviesGrid from "./components/movies";
-
+import MoviesGrid from "./components/moviesgrid";
+import "./App.css";
 
 class App extends Component {
 

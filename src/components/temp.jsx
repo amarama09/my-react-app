@@ -21,7 +21,13 @@ const Temp = () => {
         }}
       />
       
-
+   
+      <td>{row.title}</td>
+            <td>{row.genre.name}</td>
+            <td>{row.numberInStock}</td>
+            <td>{row.dailyRentalRate}</td>
+            <td><Like liked={row.like} handleLikeToggle={handleLikeToggle} obj={row}/></td>
+            <td><button className="btn btn-info text-white btn-small"  onClick={()=>this.handleRowDelete(row)} >Delete</button></td>
       <table className="table">
         <thead>
           <tr>
