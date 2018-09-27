@@ -1,7 +1,6 @@
 import React, { Component } from "react";
 import _ from "lodash";
 class Table extends Component {
-
   raiseSort = column => {
     this.props.columnSort(column);
   };
@@ -16,11 +15,8 @@ class Table extends Component {
     );
   }
 
-
-
-
   render() {
-    const { rows,columns } = this.props;
+    const { rows, columns } = this.props;
 
     return (
       <table className="table bg-light table-hover shadow">
@@ -28,6 +24,7 @@ class Table extends Component {
           <tr className="bg-secondary text-white">
             {columns.map(col => (
               <th
+                key={col.name}
                 className="clickable"
                 onClick={col.name ? () => this.raiseSort(col.name) : null}
               >
@@ -40,12 +37,12 @@ class Table extends Component {
 
         <tbody>
           {rows.map(row => (
-            <tr key={row._id} >
+            <tr key={row._id}>
               {columns.map(col => (
-                <td>
+                <td key={col.name}>
                   {col.component ? col.component(row) : _.get(row, col.name)}{" "}
                 </td>
-              ))}{" "}
+              ))}
             </tr>
           ))}
         </tbody>

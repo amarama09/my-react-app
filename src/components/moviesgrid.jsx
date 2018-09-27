@@ -3,11 +3,11 @@ import { getMovies } from "../services/fakeMovieService";
 import Table from "./table";
 import Paginator from "./paginator";
 import ListGroup from "./listgroup";
-import _ from 'lodash';
+import _ from "lodash";
 import { getGenres } from "../services/fakeGenreService";
 import Like from "./like";
-
-
+import { Link } from "react-router-dom";
+import SearchBox from "./common/searchbox";
 
 class MoviesGrid extends Component {
   state = {
@@ -19,11 +19,16 @@ class MoviesGrid extends Component {
     sortObj: { name: "title", order: "asc" }
   };
   columns = [
-    { name: "title", label: "Title" },
+    {
+      name: "title",
+      label: "Title",
+      component: row => <Link to={`/movie/${row._id}`}>{row.title}</Link>
+    },
     { name: "genre.name", label: "Genre" },
     { name: "numberInStock", label: "Stock" },
     { name: "dailyRentalRate", label: "Rate" },
     {
+      name: "like",
       component: row => (
         <Like
           liked={row.like}
@@ -33,12 +38,13 @@ class MoviesGrid extends Component {
       )
     },
     {
+      name: "delete",
       component: row => (
         <button
-          className="btn btn-info text-white btn-small"
+          className="btn btn-secondary text-light btn-small"
           onClick={() => this.deleteMovie(row)}
         >
-          Delete
+          x
         </button>
       )
     }
@@ -48,9 +54,13 @@ class MoviesGrid extends Component {
   }
 
   sortMovies(movieList) {
-  return _.orderBy(movieList,[this.state.sortObj.name],[this.state.sortObj.order]);
+    return _.orderBy(
+      movieList,
+      [this.state.sortObj.name],
+      [this.state.sortObj.order]
+    );
 
-  /* const sortedMovies= movieList.sort((movie1, movie2) => {
+    /* const sortedMovies= movieList.sort((movie1, movie2) => {
 
       let m1 = _.get(movie1,this.state.sortObj.name);
       let m2 = _.get(movie2,this.state.sortObj.name);
@@ -96,6 +106,18 @@ class MoviesGrid extends Component {
     );
   }
 
+  handleSearch = searchTerm => {
+    const movieResults = getMovies().filter(movie =>
+      movie.title.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    this.setState({
+      movies: movieResults,
+      itemActive: { _id: 1, name: "All Genre" },
+      currentPage: 1
+    });
+  };
+
   render() {
     const { length } = this.state.movies;
     const AllGenre = { _id: 1, name: "All Genre" };
@@ -117,12 +139,13 @@ class MoviesGrid extends Component {
             />
           </div>
           <div className="col">
+            <SearchBox handleSearch={this.handleSearch} />
+
             <Table
               rows={this.moviesToPresent()}
               columns={this.columns}
               columnSort={this.handleColumnSort}
               sortObj={this.state.sortObj}
-
             />
             <Paginator
               totalItems={this.filterMovies().length}
@@ -156,9 +179,10 @@ class MoviesGrid extends Component {
 
   deleteMovie = movie => {
     const movies = this.state.movies.filter(m => m !== movie);
-    const pageNum = ((this.state.pageNum>1) && (movies.length % this.state.itemsPerPage === 0))? this.state.pageNum - 1:this.state.pageNum
-
-
+    const pageNum =
+      this.state.pageNum > 1 && movies.length % this.state.itemsPerPage === 0
+        ? this.state.pageNum - 1
+        : this.state.pageNum;
 
     this.setState({ movies, pageNum });
   };
