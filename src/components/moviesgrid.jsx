@@ -1,23 +1,31 @@
 import React, { Component } from "react";
-import { getMovies } from "../services/fakeMovieService";
+import { Link } from "react-router-dom";
+import _ from "lodash";
+import {toast} from 'react-toastify';
 import Table from "./table";
 import Paginator from "./paginator";
 import ListGroup from "./listgroup";
-import _ from "lodash";
-import { getGenres } from "../services/fakeGenreService";
 import Like from "./like";
-import { Link } from "react-router-dom";
 import SearchBox from "./common/searchbox";
+import { getGenres } from '../services/genreService';
+import { getMovies ,deleteMovie} from "../services/movieService";
+
 
 class MoviesGrid extends Component {
   state = {
-    movies: getMovies(),
-    genres: getGenres(),
+    movies: [],
+    genres: [],
     pageNum: 1,
     itemActive: { _id: 1, name: "All Genre" },
     itemsPerPage: 4,
     sortObj: { name: "title", order: "asc" }
   };
+
+ async componentDidMount(){
+   const movies = await getMovies();
+   const genres =  await getGenres();
+   this.setState({movies,genres})
+  }
   columns = [
     {
       name: "title",
@@ -119,6 +127,7 @@ class MoviesGrid extends Component {
   };
 
   render() {
+
     const { length } = this.state.movies;
     const AllGenre = { _id: 1, name: "All Genre" };
 
@@ -134,7 +143,7 @@ class MoviesGrid extends Component {
               itemActive={this.state.itemActive}
               onItemSelect={itemObj => {
                 const itemActive = { ...itemObj };
-                this.setState({ itemActive, pageNum: 1 });
+                this.setState({ itemActive, pageNum: 1 });  
               }}
             />
           </div>
@@ -178,6 +187,8 @@ class MoviesGrid extends Component {
   }
 
   deleteMovie = movie => {
+    const stateRef=this.state;
+
     const movies = this.state.movies.filter(m => m !== movie);
     const pageNum =
       this.state.pageNum > 1 && movies.length % this.state.itemsPerPage === 0
@@ -185,6 +196,13 @@ class MoviesGrid extends Component {
         : this.state.pageNum;
 
     this.setState({ movies, pageNum });
+
+    deleteMovie(movie._id).catch(error=>{
+      toast.error("ERROR DELETING",error);
+      this.setState(stateRef)
+    })
+
+
   };
 
   getSummary = () => {

@@ -2,6 +2,8 @@ import React from "react";
 const Select = props => {
   const { options, onChange,label,name,selection,errors } = props;
 
+  console.log("OPTIONS",options);
+
   return (
     <div className="form-group">
 

@@ -9,11 +9,15 @@ import "./App.css";
 import MovieForm from "./components/movieform";
 import Login from './components/login';
 import Register from './components/register';
+import { ToastContainer } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
+import NotFound from './components/notfound';
 
 class App extends Component {
   render() {
     return (
       <React.Fragment>
+        <ToastContainer/>
         <Jambotron/>
         <NavBar />
         <main className="container">
@@ -23,7 +27,9 @@ class App extends Component {
             <Route path='/movie/:id' component={MovieForm}/>
             <Route path='/login' component={Login}/>
             <Route path='/register' component={Register}/>
+            <Route path='/not-found' component={NotFound}/>
             <Redirect from='/movies' to='/'/>
+
             <Route path='/' component={MoviesGrid}/>
 
         </Switch>

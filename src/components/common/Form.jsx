@@ -3,6 +3,7 @@ import Joi from "joi-browser";
 import Input from "./input";
 import Select from "./select";
 class Form extends Component {
+  
     validateForm = () => {
         const error = Joi.validate(this.state.data, this.schema, {
           abortEarly: false
