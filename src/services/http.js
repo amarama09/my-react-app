@@ -2,6 +2,9 @@ import http from 'axios';
 import {toast} from 'react-toastify';
 import logger from './logger.js';
 
+
+
+
 http.interceptors.response.use(null, error=>{
     const expectedError=error.response && (error.response.status >= 400 && error.response.status <500);
 
@@ -12,8 +15,12 @@ http.interceptors.response.use(null, error=>{
     return Promise.reject(error);      
 } );
 
+export const setJWT=(jwt)=>{
+    http.defaults.headers.common['x-auth-token']=jwt;
+}
+
 export default {
     get:http.get,
     put:http.put,
     post:http.post,
-    delete:http.delete};
+    delete:http.delete,setJWT};

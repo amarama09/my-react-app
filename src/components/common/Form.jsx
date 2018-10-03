@@ -3,7 +3,7 @@ import Joi from "joi-browser";
 import Input from "./input";
 import Select from "./select";
 class Form extends Component {
-  
+
     validateForm = () => {
         const error = Joi.validate(this.state.data, this.schema, {
           abortEarly: false
@@ -19,7 +19,7 @@ class Form extends Component {
         const schema = {};
         schema[field.id] = this.schema[field.id];
     
-        console.log(data, schema);
+
     
         const error = Joi.validate(data, schema, { abortEarly: false }).error;
     
@@ -54,8 +54,6 @@ class Form extends Component {
       onChange = e => {
         const data = { ...this.state.data };
 
-        console.log('ON CHANGE',e.currentTarget.value)
-    
         data[e.currentTarget.id] = e.currentTarget.value;
         const errorOnField = this.validateField(e.currentTarget);
         const currentErrors = { ...this.state.errors };

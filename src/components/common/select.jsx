@@ -2,7 +2,7 @@ import React from "react";
 const Select = props => {
   const { options, onChange,label,name,selection,errors } = props;
 
-  console.log("OPTIONS",options);
+
 
   return (
     <div className="form-group">
@@ -13,8 +13,6 @@ const Select = props => {
         id={name}
         onChange={onChange}
         value={selection}>
-
-
         <option value=''>Select {label}...</option>
         {options.map(option => (
           <option
@@ -22,9 +20,6 @@ const Select = props => {
             value={option._id}>       
             {option.name}
           </option>
-
-
-
         ))}
       </select>
       {errors &&

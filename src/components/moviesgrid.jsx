@@ -9,6 +9,7 @@ import Like from "./like";
 import SearchBox from "./common/searchbox";
 import { getGenres } from '../services/genreService';
 import { getMovies ,deleteMovie} from "../services/movieService";
+import {getUser} from '../services/authService';
 
 
 class MoviesGrid extends Component {
@@ -44,19 +45,28 @@ class MoviesGrid extends Component {
           obj={row}
         />
       )
-    },
-    {
-      name: "delete",
-      component: row => (
-        <button
-          className="btn btn-secondary text-light btn-small"
-          onClick={() => this.deleteMovie(row)}
-        >
-          x
-        </button>
-      )
     }
   ];
+
+
+  deleteColumn={
+    name: "delete",
+    component: row => (
+      <button
+        className="btn btn-secondary text-light btn-small"
+        onClick={() => this.deleteMovie(row)}
+      >
+        x
+      </button>
+    )
+  }
+
+  getColumns=()=>{
+  
+    const user =getUser()
+    return (user && user.isAdmin) ? [...this.columns,this.deleteColumn]:this.columns
+
+  }
   moviesToPresent() {
     return this.paginate(this.sortMovies(this.filterMovies()));
   }
@@ -114,16 +124,19 @@ class MoviesGrid extends Component {
     );
   }
 
-  handleSearch = searchTerm => {
-    const movieResults = getMovies().filter(movie =>
-      movie.title.toLowerCase().includes(searchTerm.toLowerCase())
-    );
-
-    this.setState({
-      movies: movieResults,
-      itemActive: { _id: 1, name: "All Genre" },
-      currentPage: 1
-    });
+  handleSearch =  searchTerm => {
+     getMovies().then(
+        movies=>{
+          
+          const results=movies.filter(movie =>
+          movie.title.toLowerCase().includes(searchTerm.toLowerCase()))
+          this.setState({
+            movies: results,
+            itemActive: { _id: 1, name: "All Genre" },
+            pageNum: 1
+          })
+        })
+    
   };
 
   render() {
@@ -152,7 +165,7 @@ class MoviesGrid extends Component {
 
             <Table
               rows={this.moviesToPresent()}
-              columns={this.columns}
+              columns={this.getColumns()}
               columnSort={this.handleColumnSort}
               sortObj={this.state.sortObj}
             />
@@ -198,7 +211,7 @@ class MoviesGrid extends Component {
     this.setState({ movies, pageNum });
 
     deleteMovie(movie._id).catch(error=>{
-      toast.error("ERROR DELETING",error);
+      toast.error(error.response.data);
       this.setState(stateRef)
     })
 
